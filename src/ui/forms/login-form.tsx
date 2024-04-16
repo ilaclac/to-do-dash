@@ -87,8 +87,8 @@ export default function LoginForm() {
                 {...register('password', {
                   required: 'Field is required.',
                   minLength: {
-                    value: 4,
-                    message: 'Min length is 4 characters.',
+                    value: 6,
+                    message: 'Min length is 6 characters.',
                   },
                 })}
                 placeholder="Enter password"

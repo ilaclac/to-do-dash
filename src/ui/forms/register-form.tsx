@@ -123,8 +123,8 @@ export default function RegisterForm() {
                 {...register('password', {
                   required: 'Field is required.',
                   minLength: {
-                    value: 4,
-                    message: 'Min length is 4 characters.',
+                    value: 6,
+                    message: 'Min length is 6 characters.',
                   },
                 })}
                 placeholder="Enter password"
@@ -148,8 +148,8 @@ export default function RegisterForm() {
                 {...register('confirmPassword', {
                   required: 'Field is required.',
                   minLength: {
-                    value: 4,
-                    message: 'Min length is 4 characters.',
+                    value: 6,
+                    message: 'Min length is 6 characters.',
                   },
                 })}
                 placeholder="Confirm password"
