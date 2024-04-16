@@ -16,6 +16,7 @@ export const TodoTable: FC<TodoTableProps> = ({
   onCancelEdit,
   onToggleDone,
   editingItemId,
+  isSaving,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,7 +71,14 @@ export const TodoTable: FC<TodoTableProps> = ({
                           onKeyDown={(e) =>
                             handleKeyDown(e, item.id, item.title)
                           }
-                          className="text-sm font-semibold md:text-base"
+                          disabled={isSaving}
+                          className={clsx(
+                            'rounded-lg text-sm font-semibold md:text-base',
+                            {
+                              'bg-gray-400 hover:bg-gray-400': isSaving,
+                              'bg-orange-200': !isSaving,
+                            },
+                          )}
                         />
                       ) : (
                         <p
@@ -78,7 +86,7 @@ export const TodoTable: FC<TodoTableProps> = ({
                             'transform cursor-pointer truncate text-sm font-semibold hover:scale-110 hover:text-red-500 md:text-base',
                             { 'italic text-gray-500 line-through': item.done },
                           )}
-                          onClick={() => onToggleDone(item.id)}
+                          onClick={() => !isSaving && onToggleDone(item.id)}
                         >
                           {item.title}
                         </p>
@@ -88,22 +96,40 @@ export const TodoTable: FC<TodoTableProps> = ({
                   <div className="flex">
                     <div className="flex items-end pb-2 pt-6">
                       {editingItemId === item.id ? (
-                        <Button onClick={() => onSaveItem(item.id, item.title)}>
+                        <Button
+                          onClick={() => onSaveItem(item.id, item.title)}
+                          disabled={isSaving}
+                          className={clsx('ml-2 text-sm text-gray-500', {
+                            'bg-gray-400 hover:bg-gray-400': isSaving,
+                            'bg-green-500': !isSaving,
+                          })}
+                        >
                           Save <CheckIcon className="ml-2 h-5 w-5" />
                         </Button>
                       ) : (
-                        <Button onClick={() => onEditItem(item.id)}>
+                        <Button
+                          onClick={() => onEditItem(item.id)}
+                          disabled={isSaving}
+                          className={clsx('ml-2 text-sm text-gray-500', {
+                            'bg-gray-400 hover:bg-gray-400': isSaving,
+                            'bg-blue-500': !isSaving,
+                          })}
+                        >
                           Edit <PencilSquareIcon className="ml-2 h-5 w-5" />
                         </Button>
                       )}
                     </div>
                     <div className="end flex pb-2 pt-6">
                       <Button
-                        className="ml-2 bg-red-500 text-sm text-gray-500"
+                        className={clsx('ml-2 text-sm text-gray-500', {
+                          'bg-gray-400 hover:bg-gray-400': isSaving,
+                          'bg-red-500': !isSaving,
+                        })}
                         onClick={() => onDeleteItem(item.id)}
+                        disabled={isSaving}
                       >
                         Delete Item
-                        <TrashIcon className="h-5 w-5 text-yellow-200" />
+                        <TrashIcon className="h-5 w-5 text-white" />
                       </Button>
                     </div>
                   </div>

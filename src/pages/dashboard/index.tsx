@@ -37,7 +37,7 @@ interface Action {
   previousItem?: Item;
 }
 
-export default function Dashboard({ children }: { children: React.ReactNode }) {
+export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const { userName, logout } = useCheckSession();
   const [data, setData] = useState<DashboardState>({ items: [] });
@@ -49,6 +49,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [undoStack, setUndoStack] = useState<Action[]>([]);
   const [redoStack, setRedoStack] = useState<Action[]>([]);
   const { items } = data;
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -106,7 +107,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     setRedoStack([]);
   };
 
-  const handleSaveItem = (id: string, newTitle: string) => {
+  const handleSaveItem = (id: string) => {
     const editedItem = items.find((item) => item.id === id);
     if (!editedItem) return;
 
@@ -247,6 +248,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   };
 
   const handleSaveChanges = async () => {
+    setIsSaving(true);
     const addedItems = items.filter(
       (item) => !item.id || !originalItems.some((oi) => oi.id === item.id),
     );
@@ -264,10 +266,6 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     const deletedItems = originalItems.filter(
       (oi) => !items.some((item) => item.id === oi.id),
     );
-
-    console.log(addedItems, 'Added Items');
-    console.log(updatedItems, 'Updated Items');
-    console.log(deletedItems, 'Deleted Items');
 
     try {
       const results = await Promise.all([
@@ -305,6 +303,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Failed to save changes:', error);
       alert('Failed to save changes.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -325,8 +325,12 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
           <div className="p-5">
             <div className="flex flex-row items-center justify-between py-4 xs:flex xs:flex-col xs:items-center">
               <Button
-                className="ml-2 bg-red-500 text-sm text-gray-500 xs:mb-4"
+                className={clsx('ml-2 text-sm text-gray-500 xs:mb-4', {
+                  'bg-gray-400 hover:bg-gray-400': isSaving,
+                  'bg-red-500': !isSaving,
+                })}
                 onClick={handleAddItem}
+                disabled={isSaving}
               >
                 Add Item
                 <PlusIcon className="h-5 w-5 text-yellow-200" />
@@ -334,22 +338,24 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               <div className="flex">
                 <Button
                   className={clsx('ml-2 text-sm text-white', {
-                    'bg-gray-400 hover:bg-gray-400': undoStack.length <= 1,
-                    'bg-green-500': undoStack.length > 1,
+                    'bg-gray-400 hover:bg-gray-400':
+                      undoStack.length <= 1 || isSaving,
+                    'bg-red-500': undoStack.length > 1 && !isSaving,
                   })}
                   onClick={handleUndo}
-                  disabled={undoStack.length <= 1}
+                  disabled={undoStack.length <= 1 || isSaving}
                 >
                   <ArrowLeftCircleIcon className="h-5 w-5" />
                   Undo
                 </Button>
                 <Button
                   className={clsx('ml-2 text-sm text-white', {
-                    'bg-gray-400 hover:bg-gray-400': redoStack.length <= 0,
-                    'bg-orange-500': redoStack.length > 0,
+                    'bg-gray-400 hover:bg-gray-400':
+                      redoStack.length <= 0 || isSaving,
+                    'bg-green-400': redoStack.length > 0 && !isSaving,
                   })}
                   onClick={handleRedo}
-                  disabled={redoStack.length === 0}
+                  disabled={redoStack.length === 0 || isSaving}
                 >
                   Redo <ArrowRightCircleIcon className="h-5 w-5" />
                 </Button>
@@ -367,16 +373,18 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 onCancelEdit={handleCancelEdit}
                 onToggleDone={handleToggleDone}
                 editingItemId={editingItemId}
+                isSaving={isSaving}
               />
             )}
             <div className="flex items-center pb-2 pt-6">
               <Button
                 className={clsx('ml-2 text-sm text-white', {
-                  'bg-gray-400 hover:bg-gray-400': !haveItemsChanged(),
-                  'bg-red-500': haveItemsChanged(),
+                  'bg-gray-400 hover:bg-gray-400':
+                    !haveItemsChanged() || isSaving,
+                  'bg-green-500': haveItemsChanged() && !isSaving,
                 })}
                 onClick={handleSaveChanges}
-                disabled={!haveItemsChanged()}
+                disabled={!haveItemsChanged() || isSaving}
               >
                 Save Changes
                 <BookmarkIcon className="text-white-200 h-5 w-5" />

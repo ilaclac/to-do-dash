@@ -32,4 +32,5 @@ export interface TodoTableProps {
   onCancelEdit: () => void;
   onToggleDone: (id: string) => void;
   editingItemId: string | null;
+  isSaving: boolean;
 }
