@@ -51,7 +51,7 @@ export const TodoTable: FC<TodoTableProps> = ({
                 <div
                   key={item.id}
                   className={clsx(
-                    'xs:flex xs:flex-col xs:items-center flex flex-row items-center justify-between py-4',
+                    'flex flex-row items-center justify-between py-4 xs:flex xs:flex-col xs:items-center',
                     {
                       'border-t': i !== 0,
                     },

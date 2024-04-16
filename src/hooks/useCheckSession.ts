@@ -41,7 +41,7 @@ const useCheckSession = () => {
     } catch (error) {
       console.error('Logout failed:', error);
     }
-  }, []);
+  }, [router]);
 
   return { ...isLoggedIn, logout };
 };
