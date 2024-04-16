@@ -3,39 +3,11 @@ import Link from 'next/link';
 import { lusitana } from '@/src/ui/fonts';
 import Image from 'next/image';
 import { Button } from '@/src/ui/button';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { fetchApi } from '@/src/lib/fetchApi';
-import { LOGOUT_ROUTE, CHECK_SESSION_ROUTE } from '@/src/constants';
 import Head from 'next/head';
+import useCheckSession from '@/src/hooks/useCheckSession';
 
 export default function Page() {
-  const [isLoggedIn, setIsLoggedIn] = useState({ status: false, userName: '' });
-
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await axios.get(`${CHECK_SESSION_ROUTE}`, {});
-        if (response.data.isLoggedIn && response.data.name) {
-          setIsLoggedIn({
-            status: response.data.isLoggedIn,
-            userName: response.data.name,
-          });
-        } else {
-          setIsLoggedIn({ status: false, userName: '' });
-        }
-      } catch (error) {
-        setIsLoggedIn({ status: false, userName: '' });
-      }
-    };
-
-    checkSession();
-  }, []);
-
-  const handleLogout = async () => {
-    await fetchApi('POST', `${LOGOUT_ROUTE}`, {});
-    setIsLoggedIn({ status: false, userName: '' });
-  };
+  const { status, userName, logout } = useCheckSession();
 
   return (
     <>
@@ -60,14 +32,12 @@ export default function Page() {
               className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
             >
               <strong className="text-5xl text-red-500">
-                {isLoggedIn.status
-                  ? isLoggedIn.userName.toUpperCase() + ','
-                  : ''}
+                {status ? userName.toUpperCase() + ',' : ''}
               </strong>
               <br />
               <strong>Welcome to Deas Group.</strong>
             </p>
-            {!isLoggedIn.status ? (
+            {!status ? (
               <>
                 <Link
                   href="/login"
@@ -94,7 +64,7 @@ export default function Page() {
                   <ArrowRightIcon className="w-5 md:w-6" />
                 </Link>
                 <Button
-                  onClick={handleLogout}
+                  onClick={logout}
                   className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
                 >
                   <span>Logout</span>

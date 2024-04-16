@@ -1,4 +1,4 @@
-import SideNav from '@/src/ui/dashboard/sidenav';
+import { SideNav } from '@/src/ui/dashboard/sidenav';
 import { TodoTable } from '@/src/ui/dashboard/todo-table';
 import { lusitana } from '@/src/ui/fonts';
 import { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ import { Button } from '@/src/ui/button';
 import clsx from 'clsx';
 import { Item } from '@/src/lib/definitions';
 import Head from 'next/head';
+import useCheckSession from '@/src/hooks/useCheckSession';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -38,6 +39,7 @@ interface Action {
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
+  const { userName, logout } = useCheckSession();
   const [data, setData] = useState<DashboardState>({ items: [] });
   const [originalItems, setOriginalItems] = useState<Item[]>([]);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -313,17 +315,17 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       </Head>
       <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
         <div className="w-full flex-none md:w-64">
-          <SideNav />
+          <SideNav logout={logout} />
         </div>
         <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
           <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-            Dashboard
+            User: <strong className="pl-2 text-red-500">{userName}</strong>
           </h1>
 
           <div className="p-5">
-            <div className="xs:flex xs:flex-col xs:items-center flex flex-row items-center justify-between py-4">
+            <div className="flex flex-row items-center justify-between py-4 xs:flex xs:flex-col xs:items-center">
               <Button
-                className="xs:mb-4 ml-2 bg-red-500 text-sm text-gray-500"
+                className="ml-2 bg-red-500 text-sm text-gray-500 xs:mb-4"
                 onClick={handleAddItem}
               >
                 Add Item
@@ -343,8 +345,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 </Button>
                 <Button
                   className={clsx('ml-2 text-sm text-white', {
-                    'bg-gray-400 hover:bg-gray-400': redoStack.length <= 1,
-                    'bg-orange-500': redoStack.length > 1,
+                    'bg-gray-400 hover:bg-gray-400': redoStack.length <= 0,
+                    'bg-orange-500': redoStack.length > 0,
                   })}
                   onClick={handleRedo}
                   disabled={redoStack.length === 0}
