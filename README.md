@@ -2,8 +2,16 @@
 
 ## Hello,
 
-thank you for taking the time and checking out this small testing homework!
+thank you for taking the time and checking out this homework!
 
-Best regards,
+I've hosted the app on Vercel, you can take a look at: 
 
-_Ivan Lackovic_
+### https://to-do-dash.vercel.app/
+
+### Local environment setup
+
+`npm install`
+
+`npm run dev`
+
+There is no .env, I didn't find a need for it
