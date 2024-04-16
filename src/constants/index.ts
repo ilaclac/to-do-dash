@@ -1,0 +1,11 @@
+const AUTH_BASE = 'api/auth';
+const ITEMS_BASE = 'api/items';
+export const DEAS_API_BASE = 'https://good-monday-js-test.vercel.app';
+export const LOGIN_ROUTE = `${AUTH_BASE}/login`;
+export const REGISTER_ROUTE = `${AUTH_BASE}/register`;
+export const LOGOUT_ROUTE = `${AUTH_BASE}/logout`;
+export const CHECK_SESSION_ROUTE = `${AUTH_BASE}/check-session`;
+export const GET_ITEMS_ROUTE = `${ITEMS_BASE}/get-items`;
+export const ADD_ITEMS_ROUTE = `${ITEMS_BASE}/add-item`;
+export const UPDATE_ITEMS_ROUTE = `${ITEMS_BASE}/update-item`;
+export const DELETE_ITEMS_ROUTE = `${ITEMS_BASE}/delete-item`;
